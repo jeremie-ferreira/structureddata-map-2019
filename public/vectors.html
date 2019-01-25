@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+<style>
+.domain {
+	fill: none;
+	stroke: #000;
+	stroke-width: 1px;
+}	
+
+.bar {
+	fill: steelblue;
+}
+</style>
+
+</head>
+
+
+<body>
+
+	<svg id="main-svg" width="800" height="600">
+	</svg>
+</body>
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+var benefits = [
+{month: "january", benefits: 52},
+{month: "february", benefits: 43},
+{month: "march", benefits: 64},
+{month: "april", benefits: 74},
+{month: "may", benefits: 30}
+];
+
+var svg = d3.select("#main-svg");
+
+var x = d3.scale.ordinal().rangeRoundBands([0, 500], .05);
+var y = d3.scale.linear().range([200, 0]);
+
+x.domain(benefits.map(function(d) { return d.month; }));
+y.domain([0, 100]);
+
+var scale = function(d) {
+	return d * 2;
+}
+
+svg.selectAll(".bar")
+	.data(benefits)
+	.enter()
+	.append("rect")
+		.attr("class", "bar")
+		.attr("x", function(d, i) { return 100 * i; } )
+		.attr("width", "50")
+		.attr("height", function(d) { return scale(d.benefits); } )
+		.attr("y", function(d) { return scale(100 - d.benefits)} );
+
+var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient("bottom");
+
+svg.append("g")
+	.attr("class", "x-axis")
+	.attr("transform", "translate(0, 200)")
+	.call(xAxis)
+	/*
+	.append("text")
+		.attr("x", function (d, i) { return 25 + i * 100; })
+		.attr("y", function(d) { return scale(100); })
+*/
+
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.orient("right")
+	.ticks(10);
+
+svg.append("g")
+	.attr("class", "y-axis")
+	.attr("transform", "translate(500, 0)")
+	.call(yAxis);
+
+</script>
+
+</html>
